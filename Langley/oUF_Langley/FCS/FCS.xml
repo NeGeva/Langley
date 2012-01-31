@@ -1,0 +1,4 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="FCS.lua"/>
+	<Script file="Threat_Warning.lua"/>
+</Ui>

@@ -1,0 +1,11 @@
+## Interface: 40300
+## Title: |cffBD2B1EL|rangley
+## Notes: Langley
+## Credits to: Dawn, Tukz, Shestak, Haste, Roth, P3lim, Monolit, AlleyKat.
+## Author: NeGeva
+## SavedVariables:
+## SavedVariablesPerCharacter:
+## OptionalDeps:
+## X-oUF: oUFLangley
+
+Langley.xml

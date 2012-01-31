@@ -1,0 +1,14 @@
+## Interface: 40300
+## Title: oUF_|cffF23022Langley|r
+## Notes: An oUF layout
+## Credits to: Dawn, Tukz, Shestak, Haste, Roth, P3lim, Monolit, AlleyKat.
+## Version: 
+## Author: NeGeva
+## RequiredDeps: oUF
+## X-Category: UnitFrame
+
+oUF_Langley.xml
+
+--- ----------------------------------
+--> 
+--- ----------------------------------

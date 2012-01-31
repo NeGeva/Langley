@@ -1,0 +1,11 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Core\Init.lua"/>
+	<Script file="Core\Slash.lua"/>
+	<Script file="Core\Function.lua"/>
+	<Script file="Config.lua"/>
+	<Include file="oUF\oUF.xml"/>
+	<Include file="oUF_Langley\oUF_Langley.xml"/>
+	<Script file="Minimap\Minimap.lua"/>
+	<Script file="Chat\Chat.lua"/>
+	<Script file="System\SysInfo.lua"/>
+</Ui>

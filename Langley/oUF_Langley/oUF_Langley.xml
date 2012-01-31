@@ -1,0 +1,18 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Langley_Config.lua"/>
+	<Script file="core\Langley_AuraFilter.lua"/>
+	<Script file="core\Langley_Tags.lua"/>
+	<Script file="element\Indicators.lua"/>
+	<Script file="element\AuraWatchers.lua"/>
+	<Script file="element\SwingBar.lua"/>
+	<Script file="element\TotemBar.lua"/>
+	<Script file="element\Warning.lua"/>
+	<Script file="core\Langley_Lib.lua"/>
+	<Script file="core\Langley_CastBar.lua"/>
+	<Script file="core\Langley_RaidTags.lua"/>
+	<Script file="core\Langley_Raid.lua"/>
+	<Script file="core\Langley_Party.lua"/>
+	<Script file="core\Langley_Core.lua"/>
+	<Script file="element\Frame.lua"/>
+	<Include file="FCS\FCS.xml"/>
+</Ui>
