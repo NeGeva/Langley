@@ -1,20 +1,24 @@
 ﻿local T, C, F = unpack(select(2, ...))
 local mediaFolder = "Interface\\Addons\\Langley\\System\\Media\\"
 
+local format = string.format
+local floor = math.floor
+
 --- ----------------------------------
 --> Button
 --- ----------------------------------
 --Button(82/128,32),Display(64,32),Board(82/128,128),StatusBar(44/64,8),StatusBarBg(46/64,8)
 --
+local Lv1,Lv2,Lv3 = 1,19,20
 local cs = CreateFrame("Frame", nil, UIParent)
-cs:SetFrameLevel(19)
+cs:SetFrameLevel(1)
 cs:SetFrameStrata("HIGH")
 cs:SetSize(82,32)
 cs:Show()
 cs:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -50,-1)
 
 local function CTex(f)
-	f:SetFrameLevel(19)
+	f:SetFrameLevel(Lv2)
 	f:SetFrameStrata("HIGH")
 	f:SetSize(82,32)
 	f:Show()
@@ -51,7 +55,7 @@ CTex(Button1)
 
 -->Display1
 local Display1 = CreateFrame("Frame", nil, UIParent)
-Display1:SetFrameLevel(1)
+Display1:SetFrameLevel(Lv1)
 Display1:SetSize(64,32)
 Display1:Show()
 Display1:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 15-82,1)
@@ -70,7 +74,7 @@ CTex(Button2)
 
 -->Display2
 local Display2 = CreateFrame("Frame", nil, UIParent)
-Display2:SetFrameLevel(1)
+Display2:SetFrameLevel(Lv1)
 Display2:SetSize(64,32)
 Display2:Show()
 Display2:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 3*15-2*82-64,1)
@@ -196,8 +200,8 @@ local function Durability(f)
 			ReloadUI()
 		elseif (button == "RightButton") then
 			local yoff = select(5, self:GetPoint())
-			if yoff == 0 then MoveUp(self,100,100)
-			else MoveDown(self,0,100) 
+			if yoff == 0 then MoveUp(self,110,110)
+			else MoveDown(self,0,110) 
 			end	
 		end
 	end)
@@ -257,8 +261,8 @@ local function Bag(f)
 			--ToggleBag(0)
 		elseif (button == "RightButton") then
 			local yoff = select(5, self:GetPoint())
-			if yoff == 0 then MoveUp(self,100,100)
-			else MoveDown(self,0,100) 
+			if yoff == 0 then MoveUp(self,110,110)
+			else MoveDown(self,0,110) 
 			end	
 		end
 	end)
@@ -313,20 +317,170 @@ local function Timer(f)
 			--ToggleBag(0)
 		elseif (button == "RightButton") then
 			local yoff = select(5, self:GetPoint())
-			if yoff == 0 then MoveUp(self,100,100)
-			else MoveDown(self,0,100) 
+			if yoff == 0 then MoveUp(self,110,110)
+			else MoveDown(self,0,110) 
 			end	
 		end
 	end)
-	
-	local down, up, lagHome, lagWorld = GetNetStats()
 end
 
--->
+-->Timer Board
+local function Timer_B(f)
+	f.Late = CreateFrame("Frame", nil, f)
+	f.Late:SetFrameLevel(Lv3)
+	f.Late:SetFrameStrata("HIGH")
+	f.Late:SetSize(66,46)
+	f.Late:SetPoint("TOP", f, "BOTTOM", 0,-10)
+	
+	f.Late_Bg = f.Late:CreateTexture(nil, "BACKGROUND")
+	f.Late_Bg:SetTexture(T.Line)
+	f.Late_Bg:SetSize(66,46)
+	f.Late_Bg:SetVertexColor(0,0,0)
+	f.Late_Bg:SetAlpha(0.2)
+	f.Late_Bg:SetPoint("TOP", f.Late, "TOP", 0,0)
+	
+	f.Late_Bg_T = f.Late:CreateTexture(nil, "BORDER")
+	f.Late_Bg_T:SetTexture(mediaFolder.."Top")
+	f.Late_Bg_T:SetSize(128,16)
+	f.Late_Bg_T:SetVertexColor(unpack(T.Color.Orange))
+	f.Late_Bg_T:SetAlpha(0.8)
+	f.Late_Bg_T:SetPoint("TOPLEFT", f.Late, "TOPLEFT", -3,3)
+	
+	f.Late_Bg_B = f.Late:CreateTexture(nil, "BORDER")
+	f.Late_Bg_B:SetTexture(mediaFolder.."Bottom")
+	f.Late_Bg_B:SetSize(128,16)
+	f.Late_Bg_B:SetVertexColor(unpack(T.Color.Orange))
+	f.Late_Bg_B:SetAlpha(0.8)
+	f.Late_Bg_B:SetPoint("BOTTOMLEFT", f.Late, "BOTTOMLEFT", -3,-3)
+	
+	f.LateTxt_S = f.Late:CreateTexture(nil, "BORDER")
+	f.LateTxt_S:SetTexture(mediaFolder.."Latency")
+	f.LateTxt_S:SetSize(16,16)
+	f.LateTxt_S:SetVertexColor(unpack(T.Color.Orange))
+	f.LateTxt_S:SetAlpha(0.8)
+	f.LateTxt_S:SetPoint("TOPLEFT", f.Late, "TOPLEFT", 2,-3)
+	
+	f.LateTxt = f.Late:CreateFontString(nil, "ARTWORK")
+	f.LateTxt:SetFont(T.Font.basic05, 9, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
+	f.LateTxt:SetAlpha(0.6)
+	f.LateTxt:SetPoint("TOPRIGHT", f.Late, "TOPRIGHT", -6, -6)
+	f.LateTxt:SetJustifyH("RIGHT")
+	f.LateTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
+	
+	f.MemoTxt_S = f.Late:CreateTexture(nil, "BORDER")
+	f.MemoTxt_S:SetTexture(mediaFolder.."Memory")
+	f.MemoTxt_S:SetSize(16,16)
+	f.MemoTxt_S:SetVertexColor(unpack(T.Color.Orange))
+	f.MemoTxt_S:SetAlpha(0.8)
+	f.MemoTxt_S:SetPoint("TOP", f.LateTxt_S, "BOTTOM", 0,4)
+	
+	f.MemoTxt = f.Late:CreateFontString(nil, "ARTWORK")
+	f.MemoTxt:SetFont(T.Font.basic05, 9, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
+	f.MemoTxt:SetAlpha(0.6)
+	f.MemoTxt:SetPoint("TOPRIGHT", f.LateTxt, "BOTTOMRIGHT", 0, -3)
+	f.MemoTxt:SetJustifyH("RIGHT")
+	f.MemoTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
+	
+	f.FPSTxt_S = f.Late:CreateTexture(nil, "BORDER")
+	f.FPSTxt_S:SetTexture(mediaFolder.."FramePS")
+	f.FPSTxt_S:SetSize(16,16)
+	f.FPSTxt_S:SetVertexColor(unpack(T.Color.Orange))
+	f.FPSTxt_S:SetAlpha(0.8)
+	f.FPSTxt_S:SetPoint("TOP", f.MemoTxt_S, "BOTTOM", 0,4)
+	
+	f.FPSTxt = f.Late:CreateFontString(nil, "ARTWORK")
+	f.FPSTxt:SetFont(T.Font.basic05, 9, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
+	f.FPSTxt:SetAlpha(0.6)
+	f.FPSTxt:SetPoint("TOPRIGHT", f.MemoTxt, "BOTTOMRIGHT", 0, -3)
+	f.FPSTxt:SetJustifyH("RIGHT")
+	f.FPSTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
+	
+	f.Late:SetScript("OnUpdate", function(self)
+		local down, up, lagHome, lagWorld = GetNetStats()
+		f.LateTxt:SetText(F.Hex(T.Color.Orange)..lagWorld .. "ms".."|r")
+		
+		local totalMemo = 0
+		UpdateAddOnMemoryUsage()
+		for i = 1, GetNumAddOns() do 
+			totalMemo = totalMemo + GetAddOnMemoryUsage(i)
+		end
+		if totalMemo >= 1024 then 
+			Memo = format("%.1fm", totalMemo / 1024)
+		else
+			Memo = format("%.0fk", totalMemo)
+		end
+		f.MemoTxt:SetText(F.Hex(T.Color.Orange)..Memo.."|r")
+		totalMemo = 0
+		
+		local fps = floor(GetFramerate())
+		f.FPSTxt:SetText(F.Hex(T.Color.Orange)..fps.."|r")
+	end)
+	
+	f.BuClock = CreateFrame("Frame", nil, f)
+	f.BuClock:SetFrameLevel(Lv3)
+	f.BuClock:SetFrameStrata("HIGH")
+	f.BuClock:SetSize(43,20)
+	f.BuClock:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", -8,-56-5)
+	
+	f.BuClock.B = f.BuClock:CreateTexture(nil, "OVERLAY")
+	f.BuClock.B:SetTexture(mediaFolder.."Border1")
+	f.BuClock.B:SetSize(64,32)
+	f.BuClock.B:SetVertexColor(unpack(T.Color.Orange))
+	f.BuClock.B:SetAlpha(0.8)
+	f.BuClock.B:SetPoint("RIGHT", f.BuClock, "RIGHT", 11,0)
+	
+	f.BuClock.T = f.BuClock:CreateTexture(nil, "OVERLAY")
+	f.BuClock.T:SetTexture(mediaFolder.."Clock")
+	f.BuClock.T:SetSize(32,16)
+	f.BuClock.T:SetVertexColor(unpack(T.Color.Orange))
+	f.BuClock.T:SetAlpha(0.8)
+	f.BuClock.T:SetPoint("TOPLEFT", f.BuClock, "TOPLEFT", 5,-2)
+	
+	f.BuTimer = CreateFrame("Frame", nil, f)
+	f.BuTimer:SetFrameLevel(Lv3)
+	f.BuTimer:SetFrameStrata("HIGH")
+	f.BuTimer:SetSize(43,20)
+	f.BuTimer:SetPoint("TOPRIGHT", f.BuClock, "BOTTOMRIGHT", 0,-3)
+	
+	f.BuTimer.B = f.BuClock:CreateTexture(nil, "OVERLAY")
+	f.BuTimer.B:SetTexture(mediaFolder.."Border1")
+	f.BuTimer.B:SetSize(64,32)
+	f.BuTimer.B:SetVertexColor(unpack(T.Color.Orange))
+	f.BuTimer.B:SetAlpha(0.8)
+	f.BuTimer.B:SetPoint("RIGHT", f.BuTimer, "RIGHT", 11,0)
+	
+	f.BuTimer.T = f.BuClock:CreateTexture(nil, "OVERLAY")
+	f.BuTimer.T:SetTexture(mediaFolder.."Timer")
+	f.BuTimer.T:SetSize(32,16)
+	f.BuTimer.T:SetVertexColor(unpack(T.Color.Orange))
+	f.BuTimer.T:SetAlpha(0.8)
+	f.BuTimer.T:SetPoint("TOPLEFT", f.BuTimer, "TOPLEFT", 5,-2)
+	
+	f.BuAuto = CreateFrame("Frame", nil, f)
+	f.BuAuto:SetFrameLevel(Lv3)
+	f.BuAuto:SetFrameStrata("HIGH")
+	f.BuAuto:SetSize(20,43)
+	f.BuAuto:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 8,-56-5)
+	
+	f.BuAuto.B = f.BuClock:CreateTexture(nil, "OVERLAY")
+	f.BuAuto.B:SetTexture(mediaFolder.."Border2")
+	f.BuAuto.B:SetSize(32,64)
+	f.BuAuto.B:SetVertexColor(unpack(T.Color.Orange))
+	f.BuAuto.B:SetAlpha(0.8)
+	f.BuAuto.B:SetPoint("TOPLEFT", f.BuAuto, "TOPLEFT", -6,11)
+	
+	f.BuAuto.T = f.BuClock:CreateTexture(nil, "OVERLAY")
+	f.BuAuto.T:SetTexture(mediaFolder.."Auto")
+	f.BuAuto.T:SetSize(32,64)
+	f.BuAuto.T:SetVertexColor(unpack(T.Color.Orange))
+	f.BuAuto.T:SetAlpha(0.8)
+	f.BuAuto.T:SetPoint("TOPLEFT", f.BuAuto, "TOPLEFT", -6,11)
+end
 
 
 -->
 Durability(Button1)
 Bag(Button2)
 Timer(Button3)
+Timer_B(Button3)
 
