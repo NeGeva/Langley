@@ -154,6 +154,68 @@ local function MoveDown(f,y,l)
 	end)
 end
 
+local function sortdesc(a, b) 
+	return a[2] > b[2] 
+end	
+local function formatmem(val,dec)
+	return format(format("%%.%df %s",dec or 1,val > 1024 and "MB" or "KB"),val/(val > 1024 and 1024 or 1))
+end
+local Memo, Memory_Text, timer
+local Memory_Tip = {}
+local max_addons = 30
+
+local function MemoryInfoTip(self)
+	collectgarbage()
+	local total = 0
+	for i = 1, GetNumAddOns() do 
+		total = total + GetAddOnMemoryUsage(i)
+	end
+	
+	GameTooltip:SetOwner(self, ANCHOR_TOPRIGHT, 0,0)
+	GameTooltip:ClearLines()
+	--local lat,r = select(3,GetNetStats()),500
+	local r, down, up, lagHome, lagWorld = 500, GetNetStats()
+	local rgb = {F.Gradient(lagWorld/r, T.Color["3.0"], T.Color["Red"])}
+	GameTooltip:AddDoubleLine(
+		format("|cffffffff%s|r %s, %s%s|r %s", floor(GetFramerate()), FPS_ABBR, F.Hex(rgb), lagWorld, MILLISECONDS_ABBR),
+		format("%s: |cffffffff%s",ADDONS,formatmem(total)),0.40, 0.78, 1.00, 0.75, 0.90, 1.00)
+	GameTooltip:AddLine(" ")
+	if max_addons ~= 0 or IsAltKeyDown() then
+		if not timer or timer + 5 < time() then
+			timer = time()
+			UpdateAddOnMemoryUsage()
+			for i = 1, #Memory_Tip do Memory_Tip[i] = nil end
+			for i = 1, GetNumAddOns() do
+				local addon, name = GetAddOnInfo(i)
+				if IsAddOnLoaded(i) then tinsert(Memory_Tip,{name or addon, GetAddOnMemoryUsage(i)}) end
+			end
+			table.sort(Memory_Tip, sortdesc)
+		end
+		local exmem = 0
+		for i,t in ipairs(Memory_Tip) do
+			if max_addons and i > max_addons and not IsAltKeyDown() then
+				exmem = exmem + t[2]
+			else
+				local color = t[2] <= 102.4 and {0,1} -- 0 - 100
+				or t[2] <= 512 and {0.75,1} -- 100 - 512
+				or t[2] <= 1024 and {1,1} -- 512 - 1mb
+				or t[2] <= 2560 and {1,0.75} -- 1mb - 2.5mb
+				or t[2] <= 5120 and {1,0.5} -- 2.5mb - 5mb
+				or {1,0.1} -- 5mb +
+				GameTooltip:AddDoubleLine(t[1],formatmem(t[2]),1,1,1,color[1],color[2],0)
+			end
+		end
+		if exmem > 0 and not IsAltKeyDown() then
+			local more = #Memory_Tip - max_addons
+			GameTooltip:AddDoubleLine(format("%d %s (%s)",more,"Hidden","ALT"),formatmem(exmem),0.40, 0.78, 1.00, 0.75, 0.90, 1.00)
+		end
+		GameTooltip:AddDoubleLine(" ","--------------",1,1,1,0.5,0.5,0.5)
+	end
+	GameTooltip:AddDoubleLine("Default UI Memory Usage"..":",formatmem(gcinfo() - total),0.40, 0.78, 1.00,1,1,1)
+	GameTooltip:AddDoubleLine("Total Memory Usage"..":",formatmem(collectgarbage'count'),0.40, 0.78, 1.00,1,1,1)
+	GameTooltip:Show()
+end
+
 -->Durability
 local function Durability(f)
 	f.DuraBar = f:CreateTexture(nil, "ARTWORK")
@@ -319,7 +381,7 @@ local function Timer(f)
 	f.TimeTxt:SetJustifyH("CENTER")
 	
 	f:SetScript("OnUpdate", function(self) 
-		local late, r = select(4,GetNetStats()), 200
+		local late, r = select(4,GetNetStats()), 500
 		local d, d2
 		if late == 0 then
 			d = 0.00001
@@ -475,7 +537,7 @@ local function Timer_B(f)
 	
 	f.BuClock = CreateFrame("Button", nil, f)
 	f.BuClock:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", -7,-56-5)
-	CBun(f.BuClock,43,20,mediaFolder.."Border1",64,32,-11,6,mediaFolder.."Clock",32,16,5,-2)
+	CBun(f.BuClock,43,20,mediaFolder.."Border1",64,32,-11,6,mediaFolder.."Clock",32,16,4,-2)
 
 	f.BuTimer = CreateFrame("Button", nil, f)
 	f.BuTimer:SetPoint("TOPRIGHT", f.BuClock, "BOTTOMRIGHT", 0,-3)
@@ -485,17 +547,13 @@ local function Timer_B(f)
 	f.BuAuto:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 8,-56-5)
 	CBun(f.BuAuto,20,43,mediaFolder.."Border2",32,64,-6,11,mediaFolder.."Auto",32,64,-6,11)
 	
-	f.BuClock:SetScript("OnMouseDown", function(self, button)
-		TimeType = 1
-	end)
+	--f.Late:SetScript("OnEnter", function(self) MemoryInfoTip(self) end)
+	f.Late:SetScript("OnMouseDown", function(self) MemoryInfoTip(self) end)
+	f.Late:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	
-	f.BuTimer:SetScript("OnMouseDown", function(self, button)
-		TimeType = 2
-	end)
-	
-	f.BuAuto:SetScript("OnMouseDown", function(self, button)
-		TimeType = 3
-	end)
+	f.BuClock:SetScript("OnMouseDown", function(self, button) TimeType = 1 end)
+	f.BuTimer:SetScript("OnMouseDown", function(self, button) TimeType = 2 end)
+	f.BuAuto:SetScript("OnMouseDown", function(self, button) TimeType = 3 end)
 end
 
 
