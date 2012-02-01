@@ -3,7 +3,7 @@ local mediaFolder = "Interface\\Addons\\Langley\\System\\Media\\"
 
 local format = string.format
 local floor = math.floor
-
+local TimeType = 1
 --- ----------------------------------
 --> Button
 --- ----------------------------------
@@ -48,6 +48,42 @@ local function CTex(f)
 	f.board:SetPoint("TOP", f, "BOTTOM", 0,0)
 end
 
+local function CBun(f,x1,y1,tex1,x2,y2,x3,y3,tex2,x4,y4,x5,y5)
+	f:SetFrameLevel(Lv3)
+	f:SetFrameStrata("HIGH")
+	f:SetSize(x1,y1)
+
+	f.B = f:CreateTexture(nil, "OVERLAY")
+	f.B:SetTexture(tex1)
+	f.B:SetSize(x2,y2)
+	f.B:SetVertexColor(unpack(T.Color.Gray))
+	f.B:SetAlpha(0.8)
+	f.B:SetPoint("TOPLEFT", f, "TOPLEFT", x3,y3)
+	
+	f.H = f:CreateTexture(nil, "BACKGROUND")
+	f.H:SetTexture(T.Bar)
+	f.H:SetSize(x1-1,y1-1)
+	f.H:SetVertexColor(unpack(T.Color["2.0"]))
+	f.H:SetAlpha(0.0)
+	f.H:SetPoint("TOPLEFT", f, "TOPLEFT", 0,0)
+	
+	f.T = f:CreateTexture(nil, "OVERLAY")
+	f.T:SetTexture(tex2)
+	f.T:SetSize(x4,y4)
+	f.T:SetVertexColor(unpack(T.Color.Gray))
+	f.T:SetAlpha(0.8)
+	f.T:SetPoint("TOPLEFT", f, "TOPLEFT", x5,y5)
+	--[[
+	f:SetScript("OnEnter", function(self) 
+		f.T:SetVertexColor(unpack(T.Color.Orange))
+	end)
+	
+	f:SetScript("OnLeave", function(self) 
+		f.T:SetVertexColor(unpack(T.Color.Gray))
+	end)
+	--]]
+end
+
 -->Button1
 local Button1 = CreateFrame("Button", nil, UIParent)
 Button1:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 0,0)
@@ -90,8 +126,6 @@ Display2_Bg:SetPoint("BOTTOMRIGHT", Display2, "BOTTOMRIGHT", 0,0)
 local Button3 = CreateFrame("Button", nil, UIParent)
 Button3:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 4*15-2*82-2*64,0)
 CTex(Button3)
-
-
 
 -->Script
 local function MoveUp(f,y,l)
@@ -335,8 +369,8 @@ local function Timer_B(f)
 	f.Late_Bg = f.Late:CreateTexture(nil, "BACKGROUND")
 	f.Late_Bg:SetTexture(T.Line)
 	f.Late_Bg:SetSize(66,46)
-	f.Late_Bg:SetVertexColor(0,0,0)
-	f.Late_Bg:SetAlpha(0.2)
+	f.Late_Bg:SetVertexColor(0, 0, 0)
+	f.Late_Bg:SetAlpha(0.4)
 	f.Late_Bg:SetPoint("TOP", f.Late, "TOP", 0,0)
 	
 	f.Late_Bg_T = f.Late:CreateTexture(nil, "BORDER")
@@ -362,7 +396,7 @@ local function Timer_B(f)
 	
 	f.LateTxt = f.Late:CreateFontString(nil, "ARTWORK")
 	f.LateTxt:SetFont(T.Font.basic05, 9, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
-	f.LateTxt:SetAlpha(0.6)
+	f.LateTxt:SetAlpha(0.8)
 	f.LateTxt:SetPoint("TOPRIGHT", f.Late, "TOPRIGHT", -6, -6)
 	f.LateTxt:SetJustifyH("RIGHT")
 	f.LateTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
@@ -376,7 +410,7 @@ local function Timer_B(f)
 	
 	f.MemoTxt = f.Late:CreateFontString(nil, "ARTWORK")
 	f.MemoTxt:SetFont(T.Font.basic05, 9, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
-	f.MemoTxt:SetAlpha(0.6)
+	f.MemoTxt:SetAlpha(0.8)
 	f.MemoTxt:SetPoint("TOPRIGHT", f.LateTxt, "BOTTOMRIGHT", 0, -3)
 	f.MemoTxt:SetJustifyH("RIGHT")
 	f.MemoTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
@@ -390,7 +424,7 @@ local function Timer_B(f)
 	
 	f.FPSTxt = f.Late:CreateFontString(nil, "ARTWORK")
 	f.FPSTxt:SetFont(T.Font.basic05, 9, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
-	f.FPSTxt:SetAlpha(0.6)
+	f.FPSTxt:SetAlpha(0.8)
 	f.FPSTxt:SetPoint("TOPRIGHT", f.MemoTxt, "BOTTOMRIGHT", 0, -3)
 	f.FPSTxt:SetJustifyH("RIGHT")
 	f.FPSTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
@@ -414,67 +448,54 @@ local function Timer_B(f)
 		
 		local fps = floor(GetFramerate())
 		f.FPSTxt:SetText(F.Hex(T.Color.Orange)..fps.."|r")
+		
+		if TimeType == 2 then
+			f.BuClock.H:SetAlpha(0.0)
+			f.BuClock.T:SetVertexColor(unpack(T.Color.Gray))
+			f.BuTimer.H:SetAlpha(0.8)
+			f.BuTimer.T:SetVertexColor(unpack(T.Color["4.0"]))
+			f.BuAuto.H:SetAlpha(0.0)
+			f.BuAuto.T:SetVertexColor(unpack(T.Color.Gray))
+		elseif TimeType == 3 then
+			f.BuClock.H:SetAlpha(0.0)
+			f.BuClock.T:SetVertexColor(unpack(T.Color.Gray))
+			f.BuTimer.H:SetAlpha(0.0)
+			f.BuTimer.T:SetVertexColor(unpack(T.Color.Gray))
+			f.BuAuto.H:SetAlpha(0.8)
+			f.BuAuto.T:SetVertexColor(unpack(T.Color["4.0"]))
+		else
+			f.BuClock.H:SetAlpha(0.8)
+			f.BuClock.T:SetVertexColor(unpack(T.Color["4.0"]))
+			f.BuTimer.H:SetAlpha(0.0)
+			f.BuTimer.T:SetVertexColor(unpack(T.Color.Gray))
+			f.BuAuto.H:SetAlpha(0.0)
+			f.BuAuto.T:SetVertexColor(unpack(T.Color.Gray))
+		end
 	end)
 	
-	f.BuClock = CreateFrame("Frame", nil, f)
-	f.BuClock:SetFrameLevel(Lv3)
-	f.BuClock:SetFrameStrata("HIGH")
-	f.BuClock:SetSize(43,20)
-	f.BuClock:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", -8,-56-5)
-	
-	f.BuClock.B = f.BuClock:CreateTexture(nil, "OVERLAY")
-	f.BuClock.B:SetTexture(mediaFolder.."Border1")
-	f.BuClock.B:SetSize(64,32)
-	f.BuClock.B:SetVertexColor(unpack(T.Color.Orange))
-	f.BuClock.B:SetAlpha(0.8)
-	f.BuClock.B:SetPoint("RIGHT", f.BuClock, "RIGHT", 11,0)
-	
-	f.BuClock.T = f.BuClock:CreateTexture(nil, "OVERLAY")
-	f.BuClock.T:SetTexture(mediaFolder.."Clock")
-	f.BuClock.T:SetSize(32,16)
-	f.BuClock.T:SetVertexColor(unpack(T.Color.Orange))
-	f.BuClock.T:SetAlpha(0.8)
-	f.BuClock.T:SetPoint("TOPLEFT", f.BuClock, "TOPLEFT", 5,-2)
-	
-	f.BuTimer = CreateFrame("Frame", nil, f)
-	f.BuTimer:SetFrameLevel(Lv3)
-	f.BuTimer:SetFrameStrata("HIGH")
-	f.BuTimer:SetSize(43,20)
+	f.BuClock = CreateFrame("Button", nil, f)
+	f.BuClock:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", -7,-56-5)
+	CBun(f.BuClock,43,20,mediaFolder.."Border1",64,32,-11,6,mediaFolder.."Clock",32,16,5,-2)
+
+	f.BuTimer = CreateFrame("Button", nil, f)
 	f.BuTimer:SetPoint("TOPRIGHT", f.BuClock, "BOTTOMRIGHT", 0,-3)
-	
-	f.BuTimer.B = f.BuClock:CreateTexture(nil, "OVERLAY")
-	f.BuTimer.B:SetTexture(mediaFolder.."Border1")
-	f.BuTimer.B:SetSize(64,32)
-	f.BuTimer.B:SetVertexColor(unpack(T.Color.Orange))
-	f.BuTimer.B:SetAlpha(0.8)
-	f.BuTimer.B:SetPoint("RIGHT", f.BuTimer, "RIGHT", 11,0)
-	
-	f.BuTimer.T = f.BuClock:CreateTexture(nil, "OVERLAY")
-	f.BuTimer.T:SetTexture(mediaFolder.."Timer")
-	f.BuTimer.T:SetSize(32,16)
-	f.BuTimer.T:SetVertexColor(unpack(T.Color.Orange))
-	f.BuTimer.T:SetAlpha(0.8)
-	f.BuTimer.T:SetPoint("TOPLEFT", f.BuTimer, "TOPLEFT", 5,-2)
-	
-	f.BuAuto = CreateFrame("Frame", nil, f)
-	f.BuAuto:SetFrameLevel(Lv3)
-	f.BuAuto:SetFrameStrata("HIGH")
-	f.BuAuto:SetSize(20,43)
+	CBun(f.BuTimer,43,20,mediaFolder.."Border1",64,32,-11,6,mediaFolder.."Timer",32,16,5,-2)
+
+	f.BuAuto = CreateFrame("Button", nil, f)
 	f.BuAuto:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 8,-56-5)
+	CBun(f.BuAuto,20,43,mediaFolder.."Border2",32,64,-6,11,mediaFolder.."Auto",32,64,-6,11)
 	
-	f.BuAuto.B = f.BuClock:CreateTexture(nil, "OVERLAY")
-	f.BuAuto.B:SetTexture(mediaFolder.."Border2")
-	f.BuAuto.B:SetSize(32,64)
-	f.BuAuto.B:SetVertexColor(unpack(T.Color.Orange))
-	f.BuAuto.B:SetAlpha(0.8)
-	f.BuAuto.B:SetPoint("TOPLEFT", f.BuAuto, "TOPLEFT", -6,11)
+	f.BuClock:SetScript("OnMouseDown", function(self, button)
+		TimeType = 1
+	end)
 	
-	f.BuAuto.T = f.BuClock:CreateTexture(nil, "OVERLAY")
-	f.BuAuto.T:SetTexture(mediaFolder.."Auto")
-	f.BuAuto.T:SetSize(32,64)
-	f.BuAuto.T:SetVertexColor(unpack(T.Color.Orange))
-	f.BuAuto.T:SetAlpha(0.8)
-	f.BuAuto.T:SetPoint("TOPLEFT", f.BuAuto, "TOPLEFT", -6,11)
+	f.BuTimer:SetScript("OnMouseDown", function(self, button)
+		TimeType = 2
+	end)
+	
+	f.BuAuto:SetScript("OnMouseDown", function(self, button)
+		TimeType = 3
+	end)
 end
 
 
