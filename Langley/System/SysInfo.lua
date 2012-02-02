@@ -1,8 +1,12 @@
 ﻿local T, C, F = unpack(select(2, ...))
 local mediaFolder = "Interface\\Addons\\Langley\\System\\Media\\"
 
+-->Lua APIs
 local format = string.format
 local floor = math.floor
+-->WoW APIs
+local GetTime = GetTime
+-->Init
 local TimeType = 1
 --- ----------------------------------
 --> Button
@@ -152,6 +156,34 @@ local function MoveDown(f,y,l)
 			f:SetPoint(point, relativeTo, relativePoint, xOfs, y)
 		end
 	end)
+end
+
+local function TimeUpdate(f)
+	local hour,minute = GetGameTime()
+	f.TimeTxt:SetText(F.Hex(T.Color.Orange)..hour .. ":" .. minute.."|r")
+end
+
+local function LateBarUpdate(f)
+	local late, r = select(4,GetNetStats()), 500
+		local d, d2
+		if late == 0 then
+			d = 0.00001
+			d2 = 0
+		else
+			d = min(late/r,1)
+			d2 = floor(d*100)
+		end
+		if late < 200 then
+			--f.LateBar:SetVertexColor(unpack(T.Color["3.0"]))
+			local r,g,b = F.Gradient(d,T.Color["3.0"],T.Color["Red"])
+			f.LateBar:SetVertexColor(r,g,b)
+		else
+			local r,g,b = F.Gradient(d,T.Color["3.0"],T.Color["Red"])
+			f.LateBar:SetVertexColor(r,g,b)
+		end
+		f.LateBar:SetWidth(math.abs(d) * 44)
+   		f.LateBar:SetTexCoord(0, math.abs(d)*44/64, 0, 1)
+		late = 0
 end
 
 local function sortdesc(a, b) 
@@ -380,37 +412,37 @@ local function Timer(f)
 	f.TimeTxt:SetPoint("BOTTOM", f, "BOTTOM", 0, 5)
 	f.TimeTxt:SetJustifyH("CENTER")
 	
+	local Tvalue, Tstart, Tnow, Tmin, Tsec = 0, 0, 0, 0, 0
+	
 	f:SetScript("OnUpdate", function(self) 
-		local late, r = select(4,GetNetStats()), 500
-		local d, d2
-		if late == 0 then
-			d = 0.00001
-			d2 = 0
-		else
-			d = min(late/r,1)
-			d2 = floor(d*100)
-		end
-		
-		if late < 200 then
-			--f.LateBar:SetVertexColor(unpack(T.Color["3.0"]))
-			local r,g,b = F.Gradient(d,T.Color["3.0"],T.Color["Red"])
-			f.LateBar:SetVertexColor(r,g,b)
-		else
-			local r,g,b = F.Gradient(d,T.Color["3.0"],T.Color["Red"])
-			f.LateBar:SetVertexColor(r,g,b)
-		end
-		f.LateBar:SetWidth(math.abs(d) * 44)
-   		f.LateBar:SetTexCoord(0, math.abs(d)*44/64, 0, 1)
-		late = 0
-		
-		local hour,minute = GetGameTime()
-		f.TimeTxt:SetText(F.Hex(T.Color.Orange)..hour .. ":" .. minute.."|r")
+		LateBarUpdate(self)
+		TimeUpdate(self)
 	end)
 	
 	f:SetScript("OnMouseDown", function(self, button) 
 		if (button == "LeftButton") then
-			OpenAllBags()
-			--ToggleBag(0)
+			if TimeType == 2 then
+				if Tvalue == 0 then
+					TStart = floor(GetTime())
+					f:SetScript("OnUpdate", function(self) 
+						LateBarUpdate(self)
+						Tnow = floor(GetTime())
+						Tvalue = Tnow - Tstart
+						Tsec = (Tvalue % 60)
+						Tmin = floor((Tvalue % 3600)/60)
+						f.TimeTxt:SetText(F.Hex(T.Color.Orange)..Tmin.. ":" ..Tsec.."|r")
+					end)
+				else
+					print("---- "..Tmin..":"..Tsec.." ----")
+					Tvalue = 0
+					f:SetScript("OnUpdate", function(self) 
+						LateBarUpdate(self)
+						TimeUpdate(self)
+					end)
+				end
+			else
+				ToggleTimeManager()
+			end
 		elseif (button == "RightButton") then
 			local yoff = select(5, self:GetPoint())
 			if yoff == 0 then MoveUp(self,110,110)
@@ -553,7 +585,11 @@ local function Timer_B(f)
 	
 	f.BuClock:SetScript("OnMouseDown", function(self, button) TimeType = 1 end)
 	f.BuTimer:SetScript("OnMouseDown", function(self, button) TimeType = 2 end)
-	f.BuAuto:SetScript("OnMouseDown", function(self, button) TimeType = 3 end)
+	f.BuAuto:SetScript("OnMouseDown", function(self, button)
+		TimeType = 3 
+		
+		
+	end)
 end
 
 
