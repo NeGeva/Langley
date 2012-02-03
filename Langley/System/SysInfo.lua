@@ -8,6 +8,7 @@ local floor = math.floor
 local GetTime = GetTime
 -->Init
 local TimeType = 1
+local Tvalue, Tstart, Tnow, Tmin, Tsec = 0, 0, 0, 0, 0
 --- ----------------------------------
 --> Button
 --- ----------------------------------
@@ -189,13 +190,14 @@ end
 local function sortdesc(a, b) 
 	return a[2] > b[2] 
 end	
+
 local function formatmem(val,dec)
 	return format(format("%%.%df %s",dec or 1,val > 1024 and "MB" or "KB"),val/(val > 1024 and 1024 or 1))
 end
+
 local Memo, Memory_Text, timer
 local Memory_Tip = {}
 local max_addons = 30
-
 local function MemoryInfoTip(self)
 	collectgarbage()
 	local total = 0
@@ -412,8 +414,6 @@ local function Timer(f)
 	f.TimeTxt:SetPoint("BOTTOM", f, "BOTTOM", 0, 5)
 	f.TimeTxt:SetJustifyH("CENTER")
 	
-	local Tvalue, Tstart, Tnow, Tmin, Tsec = 0, 0, 0, 0, 0
-	
 	f:SetScript("OnUpdate", function(self) 
 		LateBarUpdate(self)
 		TimeUpdate(self)
@@ -524,25 +524,42 @@ local function Timer_B(f)
 	f.FPSTxt:SetJustifyH("RIGHT")
 	f.FPSTxt:SetText(F.Hex(T.Color.Orange).."--".."|r")
 	
-	f.Late:SetScript("OnUpdate", function(self)
-		local down, up, lagHome, lagWorld = GetNetStats()
-		f.LateTxt:SetText(F.Hex(T.Color.Orange)..lagWorld .. "ms".."|r")
+	local down, up, lagHome, lagWorld = GetNetStats()
+	local last1 = 0
+	local last2 = 0
+	local last3 = 0
+	f.Late:SetScript("OnUpdate", function(self,elapsed)
+		last1 = last1 + elapsed
+		last2 = last2 + elapsed
+		last3 = last3 + elapsed
 		
-		local totalMemo = 0
-		UpdateAddOnMemoryUsage()
-		for i = 1, GetNumAddOns() do 
-			totalMemo = totalMemo + GetAddOnMemoryUsage(i)
+		if last1 >= 10 then
+			down, up, lagHome, lagWorld = GetNetStats()
+			f.LateTxt:SetText(F.Hex(T.Color.Orange)..lagWorld .. "ms".."|r")
+			last1 = 0
 		end
-		if totalMemo >= 1024 then 
-			Memo = format("%.1fm", totalMemo / 1024)
-		else
-			Memo = format("%.0fk", totalMemo)
-		end
-		f.MemoTxt:SetText(F.Hex(T.Color.Orange)..Memo.."|r")
-		totalMemo = 0
 		
-		local fps = floor(GetFramerate())
-		f.FPSTxt:SetText(F.Hex(T.Color.Orange)..fps.."|r")
+		if last2 >= 10 then
+			local totalMemo = 0
+			UpdateAddOnMemoryUsage()
+			for i = 1, GetNumAddOns() do 
+				totalMemo = totalMemo + GetAddOnMemoryUsage(i)
+			end
+			if totalMemo >= 1024 then 
+				Memo = format("%.1fm", totalMemo / 1024)
+			else
+				Memo = format("%.0fk", totalMemo)
+			end
+			f.MemoTxt:SetText(F.Hex(T.Color.Orange)..Memo.."|r")
+			totalMemo = 0
+			last2 = 0
+		end
+		
+		if last3 >= 2 then
+			local fps = floor(GetFramerate())
+			f.FPSTxt:SetText(F.Hex(T.Color.Orange)..fps.."|r")
+			last3 = 0
+		end
 		
 		if TimeType == 2 then
 			f.BuClock.H:SetAlpha(0.0)
@@ -584,12 +601,41 @@ local function Timer_B(f)
 	f.Late:SetScript("OnMouseDown", function(self) MemoryInfoTip(self) end)
 	f.Late:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	
-	f.BuClock:SetScript("OnMouseDown", function(self, button) TimeType = 1 end)
-	f.BuTimer:SetScript("OnMouseDown", function(self, button) TimeType = 2 end)
+	f.BuClock:SetScript("OnMouseDown", function(self, button) TimeType = 1
+		f:UnregisterEvent("PLAYER_REGEN_DISABLED")
+		f:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	end)
+	f.BuTimer:SetScript("OnMouseDown", function(self, button) TimeType = 2
+		f:UnregisterEvent("PLAYER_REGEN_DISABLED")
+		f:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	end)
 	f.BuAuto:SetScript("OnMouseDown", function(self, button)
 		TimeType = 3 
-		
-		
+		f:RegisterEvent("PLAYER_REGEN_DISABLED")
+		f:RegisterEvent("PLAYER_REGEN_ENABLED")
+		f:SetScript("OnEvent", function(self,event)
+			if event == "PLAYER_REGEN_DISABLED" then
+				Tstart = floor(GetTime())
+				--print("TStart:"..Tstart)--for test
+				f:SetScript("OnUpdate", function(self) 
+					LateBarUpdate(self)
+					Tnow = floor(GetTime())
+					Tvalue = Tnow - Tstart
+					Tsec = (Tvalue % 60)
+					Tmin = floor((Tvalue % 3600)/60)
+					f.TimeTxt:SetText(F.Hex(T.Color.Orange)..Tmin.. ":" ..Tsec.."|r")
+				end)
+			elseif event == "PLAYER_REGEN_ENABLED" then
+				if Tvalue ~= 0 then
+					print("---- "..Tmin..":"..Tsec.." ----")
+					Tvalue = 0
+				end
+				f:SetScript("OnUpdate", function(self) 
+					LateBarUpdate(self)
+					TimeUpdate(self)
+				end)
+			end
+		end)
 	end)
 end
 
