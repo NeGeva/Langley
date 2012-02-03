@@ -423,7 +423,8 @@ local function Timer(f)
 		if (button == "LeftButton") then
 			if TimeType == 2 then
 				if Tvalue == 0 then
-					TStart = floor(GetTime())
+					Tstart = floor(GetTime())
+					--print("TStart:"..Tstart)--for test
 					f:SetScript("OnUpdate", function(self) 
 						LateBarUpdate(self)
 						Tnow = floor(GetTime())
