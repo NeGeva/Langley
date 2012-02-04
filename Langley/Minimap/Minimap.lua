@@ -1,5 +1,5 @@
 ﻿local T, C, F = unpack(select(2, ...))
-local mediaFolder = "Interface\\Addons\\Rei\\Minimap\\Media\\"
+local mediaFolder = "Interface\\Addons\\Langley\\Minimap\\Media\\"
 
 qparent = UIParent         
 qanchor = "TOPRIGHT"  	 
@@ -30,9 +30,11 @@ BgFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMLEFT", -(8*C.Minimap.Scale), (6*C
 local BgFrame_b = BgFrame:CreateTexture(nil, "BACKGROUND")
 BgFrame_b:SetTexture(mediaFolder.."Background")
 BgFrame_b:SetSize(256, 256)
+BgFrame_b:SetSize(256, 256)
+--BgFrame_b:SetPoint("TOPLEFT", BgFrame, "TOPLEFT", 0,0)
 BgFrame_b:SetPoint("TOPLEFT", BgFrame, "TOPLEFT", 0,0)
 BgFrame_b:SetVertexColor(unpack(T.Color.BgColor))
-BgFrame_b:SetAlpha(1)
+BgFrame_b:SetAlpha(0.8)
 
 local ArtFrame = CreateFrame("Frame", nil, Minimap)
 ArtFrame:SetFrameLevel(3)

@@ -9,12 +9,13 @@ local GetTime = GetTime
 -->Init
 local TimeType = 1
 local Tvalue, Tstart, Tnow, Tmin, Tsec = 0, 0, 0, 0, 0
+local Lv1,Lv2,Lv3 = 1,19,20
+
 --- ----------------------------------
 --> Button
 --- ----------------------------------
 --Button(82/128,32),Display(64,32),Board(82/128,128),StatusBar(44/64,8),StatusBarBg(46/64,8)
---
-local Lv1,Lv2,Lv3 = 1,19,20
+--Button(86/128,32),Display(64,32),Board(82/128,128),StatusBar(44/64,8),StatusBarBg(46/64,8)
 local cs = CreateFrame("Frame", nil, UIParent)
 cs:SetFrameLevel(1)
 cs:SetFrameStrata("HIGH")
@@ -22,35 +23,54 @@ cs:SetSize(82,32)
 cs:Show()
 cs:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -50,-1)
 
+local function CHLight(f)
+	if C["HLBorder"] ~= true then return end
+	local point, relativeTo, relativePoint, xOfs, yOfs = f:GetPoint()
+	local parent = f:GetParent()
+	local texture = f:GetTexture()
+	--print(texture)
+	--print(texture.."W")
+	f.HL = parent:CreateTexture(nil, "BACKGROUND")
+	f.HL:SetTexture(texture.."W")
+	f.HL:SetSize(f:GetSize())
+	f.HL:SetTexCoord(f:GetTexCoord())
+	f.HL:SetVertexColor(unpack(T.Color.White))
+	f.HL:SetAlpha(1)
+	f.HL:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs)
+end
+
 local function CTex(f)
 	f:SetFrameLevel(Lv2)
 	f:SetFrameStrata("HIGH")
 	f:SetSize(82,32)
 	f:Show()
 	
-	f.tex = f:CreateTexture(nil, "BACKGROUND")
+	f.tex = f:CreateTexture(nil, "ARTWORK")
 	f.tex:SetTexture(mediaFolder.."Button")
 	f.tex:SetSize(82,32)
 	f.tex:SetTexCoord(0,82/128,0,1)
 	f.tex:SetVertexColor(unpack(T.Color.BgColor))
 	f.tex:SetAlpha(0.8)
 	f.tex:SetPoint("TOP", f, "TOP", 0,0)
+	CHLight(f.tex)
 
-	f.barbg = f:CreateTexture(nil, "BACKGROUND")
+	f.barbg = f:CreateTexture(nil, "ARTWORK")
 	f.barbg:SetTexture(mediaFolder.."StatusbarBg")
 	f.barbg:SetSize(46,8)
 	f.barbg:SetTexCoord(0,46/64,0,1)
 	f.barbg:SetVertexColor(unpack(T.Color.BgColor))
 	f.barbg:SetAlpha(0.8)
 	f.barbg:SetPoint("TOP", f, "BOTTOM", 0,4)
+	CHLight(f.barbg)
 
-	f.board = f:CreateTexture(nil, "BACKGROUND")
+	f.board = f:CreateTexture(nil, "ARTWORK")
 	f.board:SetTexture(mediaFolder.."Board")
 	f.board:SetSize(82,128)
 	f.board:SetTexCoord(0,82/128,0,1)
 	f.board:SetVertexColor(unpack(T.Color.BgColor))
 	f.board:SetAlpha(0.8)
 	f.board:SetPoint("TOP", f, "BOTTOM", 0,0)
+	CHLight(f.board)
 end
 
 local function CBun(f,x1,y1,tex1,x2,y2,x3,y3,tex2,x4,y4,x5,y5)
@@ -89,6 +109,9 @@ local function CBun(f,x1,y1,tex1,x2,y2,x3,y3,tex2,x4,y4,x5,y5)
 	--]]
 end
 
+local gap = 0
+if C.HLBorder then gap = 2 end
+
 -->Button1
 local Button1 = CreateFrame("Button", nil, UIParent)
 Button1:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 0,0)
@@ -99,7 +122,7 @@ local Display1 = CreateFrame("Frame", nil, UIParent)
 Display1:SetFrameLevel(Lv1)
 Display1:SetSize(64,32)
 Display1:Show()
-Display1:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 15-82,1)
+Display1:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", (15-gap)-82,(1+gap))
 
 local Display1_Bg = Display1:CreateTexture(nil, "BACKGROUND")
 Display1_Bg:SetTexture(mediaFolder.."Display")
@@ -107,10 +130,11 @@ Display1_Bg:SetSize(64,32)
 Display1_Bg:SetVertexColor(unpack(T.Color.BgColor))
 Display1_Bg:SetAlpha(0.8)
 Display1_Bg:SetPoint("BOTTOMRIGHT", Display1, "BOTTOMRIGHT", 0,0)
+CHLight(Display1_Bg)
 
 -->Button2
 local Button2 = CreateFrame("Button", nil, UIParent)
-Button2:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 2*15-82-64,0)
+Button2:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 2*(15-gap)-82-64,0)
 CTex(Button2)
 
 -->Display2
@@ -118,7 +142,7 @@ local Display2 = CreateFrame("Frame", nil, UIParent)
 Display2:SetFrameLevel(Lv1)
 Display2:SetSize(64,32)
 Display2:Show()
-Display2:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 3*15-2*82-64,1)
+Display2:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 3*(15-gap)-2*82-64,(1+gap))
 
 local Display2_Bg = Display2:CreateTexture(nil, "BACKGROUND")
 Display2_Bg:SetTexture(mediaFolder.."Display")
@@ -126,10 +150,11 @@ Display2_Bg:SetSize(64,32)
 Display2_Bg:SetVertexColor(unpack(T.Color.BgColor))
 Display2_Bg:SetAlpha(0.8)
 Display2_Bg:SetPoint("BOTTOMRIGHT", Display2, "BOTTOMRIGHT", 0,0)
+CHLight(Display2_Bg)
 
 -->Button3
 local Button3 = CreateFrame("Button", nil, UIParent)
-Button3:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 4*15-2*82-2*64,0)
+Button3:SetPoint("BOTTOMRIGHT", cs, "BOTTOMRIGHT", 4*(15-gap)-2*82-2*64,0)
 CTex(Button3)
 
 -->Script
@@ -252,7 +277,7 @@ end
 
 -->Durability
 local function Durability(f)
-	f.DuraBar = f:CreateTexture(nil, "ARTWORK")
+	f.DuraBar = f:CreateTexture(nil, "OVERLAY")
 	f.DuraBar:SetTexture(mediaFolder.."Statusbar")
 	f.DuraBar:SetSize(44,8)
 	f.DuraBar:SetTexCoord(0,44/64,0,1)
@@ -260,7 +285,7 @@ local function Durability(f)
 	f.DuraBar:SetAlpha(1.0)
 	f.DuraBar:SetPoint("TOPLEFT", f, "BOTTOM", -22,4)
 
-	f.DuraTxt = f:CreateFontString(nil, "ARTWORK")
+	f.DuraTxt = f:CreateFontString(nil, "OVERLAY")
 	f.DuraTxt:SetFont(T.Font.basic03, 12, nil)--"OUTLINE MONOCHROME"
 	f.DuraTxt:SetAlpha(0.8)
 	f.DuraTxt:SetPoint("BOTTOM", f, "BOTTOM", 0, 5)
@@ -339,7 +364,7 @@ end
 
 -->Container
 local function Bag(f)
-	f.BagBar = f:CreateTexture(nil, "ARTWORK")
+	f.BagBar = f:CreateTexture(nil, "OVERLAY")
 	f.BagBar:SetTexture(mediaFolder.."Statusbar")
 	f.BagBar:SetSize(44,8)
 	f.BagBar:SetTexCoord(0,44/64,0,1)
@@ -347,7 +372,7 @@ local function Bag(f)
 	f.BagBar:SetAlpha(1.0)
 	f.BagBar:SetPoint("TOPLEFT", f, "BOTTOM", -22,4)
 
-	f.BagTxt = f:CreateFontString(nil, "ARTWORK")
+	f.BagTxt = f:CreateFontString(nil, "OVERLAY")
 	f.BagTxt:SetFont(T.Font.basic03, 12, nil)--"OUTLINE MONOCHROME"
 	f.BagTxt:SetAlpha(0.8)
 	f.BagTxt:SetPoint("BOTTOM", f, "BOTTOM", 0, 5)
@@ -374,10 +399,8 @@ local function Bag(f)
 			d2 = floor(free/total*100)
 		end
 		
-		if d2 < 20 then
+		if free < 10 then
 			f.BagBar:SetVertexColor(unpack(T.Color.Red))
-		elseif(d2>=20 and d2<70) then
-			f.BagBar:SetVertexColor(unpack(T.Color.Orange))
 		else
 			f.BagBar:SetVertexColor(unpack(T.Color.Orange))
 		end
@@ -400,7 +423,7 @@ end
 
 -->Timer
 local function Timer(f)
-	f.LateBar = f:CreateTexture(nil, "ARTWORK")
+	f.LateBar = f:CreateTexture(nil, "OVERLAY")
 	f.LateBar:SetTexture(mediaFolder.."Statusbar")
 	f.LateBar:SetSize(44,8)
 	f.LateBar:SetTexCoord(0,44/64,0,1)
@@ -408,7 +431,7 @@ local function Timer(f)
 	f.LateBar:SetAlpha(1.0)
 	f.LateBar:SetPoint("TOPLEFT", f, "BOTTOM", -22,4)
 
-	f.TimeTxt = f:CreateFontString(nil, "ARTWORK")
+	f.TimeTxt = f:CreateFontString(nil, "OVERLAY")
 	f.TimeTxt:SetFont(T.Font.basic03, 12, nil)--"OUTLINE MONOCHROME"
 	f.TimeTxt:SetAlpha(0.8)
 	f.TimeTxt:SetPoint("BOTTOM", f, "BOTTOM", 0, 5)

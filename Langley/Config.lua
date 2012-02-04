@@ -122,9 +122,12 @@ C["UnitFrame"] = {
 
 -->Minimap
 C["Minimap"] = {
-	["Position"] = {"TOPRIGHT", UIParent, "TOPRIGHT", -80, 0},
+	["Position"] = {"TOPRIGHT", UIParent, "TOPRIGHT", -20, 0},--（-80，0）
 	["Scale"] = 1,
 }
+
+-->边框高亮
+C["HLBorder"] = true
 
 -->Color
 T["Color"] = {
@@ -151,6 +154,7 @@ T["Color"] = {
 
 T["Line"] = "Interface\\Buttons\\WHITE8x8"
 T["Bar"] = "Interface\\Addons\\Langley\\Media\\Bar"
+T["px"] = "Interface\\Addons\\Langley\\Media\\px"
 
 -->Font
 T["Font"] = {
@@ -161,4 +165,6 @@ T["Font"] = {
 	["PIXEH"] = "Interface\\Addons\\Langley\\Media\\PIXEH___.ttf",
 	["slkscr"] = "Interface\\Addons\\Langley\\Media\\slkscr.ttf",
 	["SEMPRG"] = "Interface\\Addons\\Langley\\Media\\SEMPRG__.TTF",
+	["Zfull"] = "Interface\\Addons\\Langley\\Media\\Zfull-GB.ttf",
+	
 }
