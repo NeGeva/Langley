@@ -21,7 +21,7 @@ cs:SetFrameLevel(1)
 cs:SetFrameStrata("HIGH")
 cs:SetSize(82,32)
 cs:Show()
-cs:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -50,-1)
+cs:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20,-1)
 
 local function CHLight(f)
 	if C["HLBorder"] ~= true then return end

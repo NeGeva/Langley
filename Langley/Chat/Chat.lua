@@ -221,8 +221,8 @@ for i = 1, NUM_CHAT_WINDOWS do
 	frame.editBox:SetAltArrowKeyMode(true)
 	frame.editBox:EnableMouse(true)
 	frame.editBox:ClearAllPoints()
-	frame.editBox:SetPoint("TOPLEFT",  _G.ChatFrame1, "BOTTOMLEFT", 0, -10)
-	frame.editBox:SetPoint("TOPRIGHT", _G.ChatFrame1, "BOTTOMRIGHT", 0, -10)
+	frame.editBox:SetPoint("TOPLEFT",  _G.ChatFrame1, "BOTTOMLEFT", -5, -10)
+	frame.editBox:SetPoint("TOPRIGHT", _G.ChatFrame1, "BOTTOMRIGHT", 5, -10)
 	frame.editBox:SetFrameLevel(Lv3)
 	frame.editBox:SetHeight(28)
 	
