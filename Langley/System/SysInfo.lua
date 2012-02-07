@@ -4,9 +4,9 @@ local mediaFolder = "Interface\\Addons\\Langley\\System\\Media\\"
 -->Lua APIs
 local format = string.format
 local floor = math.floor
--->WoW APIs
+-->>WoW APIs
 local GetTime = GetTime
--->Init
+-->>Init
 local TimeType = 1
 local Tvalue, Tstart, Tnow, Tmin, Tsec = 0, 0, 0, 0, 0
 local Lv1,Lv2,Lv3 = 1,19,20
@@ -30,7 +30,7 @@ local function CHLight(f)
 	local texture = f:GetTexture()
 	--print(texture)
 	--print(texture.."W")
-	f.HL = parent:CreateTexture(nil, "BACKGROUND")
+	f.HL = parent:CreateTexture(nil, "ARTWORK")
 	f.HL:SetTexture(texture.."W")
 	f.HL:SetSize(f:GetSize())
 	f.HL:SetTexCoord(f:GetTexCoord())
@@ -275,7 +275,7 @@ local function MemoryInfoTip(self)
 	GameTooltip:Show()
 end
 
--->Durability
+-->>Durability
 local function Durability(f)
 	f.DuraBar = f:CreateTexture(nil, "OVERLAY")
 	f.DuraBar:SetTexture(mediaFolder.."Statusbar")
@@ -362,7 +362,7 @@ local function Durability(f)
 	end)
 end
 
--->Container
+-->>Container
 local function Bag(f)
 	f.BagBar = f:CreateTexture(nil, "OVERLAY")
 	f.BagBar:SetTexture(mediaFolder.."Statusbar")
@@ -421,7 +421,7 @@ local function Bag(f)
 	end)
 end
 
--->Timer
+-->>Timer
 local function Timer(f)
 	f.LateBar = f:CreateTexture(nil, "OVERLAY")
 	f.LateBar:SetTexture(mediaFolder.."Statusbar")
@@ -476,7 +476,7 @@ local function Timer(f)
 	end)
 end
 
--->Timer Board
+-->>Timer Board
 local function Timer_B(f)
 	f.Late = CreateFrame("Frame", nil, f)
 	f.Late:SetFrameLevel(Lv3)

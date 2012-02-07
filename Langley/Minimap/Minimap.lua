@@ -1,65 +1,81 @@
 ﻿local T, C, F = unpack(select(2, ...))
 local mediaFolder = "Interface\\Addons\\Langley\\Minimap\\Media\\"
 
-qparent = UIParent         
-qanchor = "TOPRIGHT"  	 
-qposition_x = -70
-qposition_y = -200
-qheight = 400
-
+-->>Init
+local Lv1,Lv2,Lv3 = 1,2,3
 --- ----------------------------------
 --> Minimap
 --- ----------------------------------
 local _, class = UnitClass('player')
 local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]			
 
-Minimap:SetSize(172*C.Minimap.Scale, 172*C.Minimap.Scale)
+Minimap:SetSize(200*C.Minimap.Scale, 200*C.Minimap.Scale)
 Minimap:SetMaskTexture(mediaFolder.."Tangle")
-Minimap:SetHitRectInsets(0, 0, 24*C.Minimap.Scale, 24*C.Minimap.Scale)
+--Minimap:SetHitRectInsets(0, 0, 24*C.Minimap.Scale, 24*C.Minimap.Scale)
 Minimap:SetFrameLevel(2)
 Minimap:ClearAllPoints()
 Minimap:SetPoint(unpack(C.Minimap.Position))
 Minimap:SetScale(C.Minimap.Scale)
 
--->Background
-local BgFrame = CreateFrame("Frame", nil, Minimap)
-BgFrame:SetFrameLevel(1)
-BgFrame:SetSize(256, 156)
-BgFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMLEFT", -(8*C.Minimap.Scale), (6*C.Minimap.Scale))	
+-->>Texture
+local function CHLight(f)
+	if C["HLBorder"] ~= true then return end
+	local point, relativeTo, relativePoint, xOfs, yOfs = f:GetPoint()
+	local parent = f:GetParent()
+	local texture = f:GetTexture()
+	--print(texture)
+	--print(texture.."W")
+	f.HL = parent:CreateTexture(nil, "ARTWORK")
+	f.HL:SetTexture(texture.."W")
+	f.HL:SetSize(f:GetSize())
+	f.HL:SetTexCoord(f:GetTexCoord())
+	f.HL:SetVertexColor(unpack(T.Color.White))
+	f.HL:SetAlpha(1)
+	f.HL:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs)
+end
 
-local BgFrame_b = BgFrame:CreateTexture(nil, "BACKGROUND")
-BgFrame_b:SetTexture(mediaFolder.."Background")
-BgFrame_b:SetSize(256, 256)
-BgFrame_b:SetSize(256, 256)
---BgFrame_b:SetPoint("TOPLEFT", BgFrame, "TOPLEFT", 0,0)
-BgFrame_b:SetPoint("TOPLEFT", BgFrame, "TOPLEFT", 0,0)
-BgFrame_b:SetVertexColor(unpack(T.Color.BgColor))
-BgFrame_b:SetAlpha(0.8)
+local function CButton(f)
 
-local ArtFrame = CreateFrame("Frame", nil, Minimap)
-ArtFrame:SetFrameLevel(3)
-ArtFrame:SetAllPoints(BgFrame)
+end
 
-local ArtFrame_1 = ArtFrame:CreateTexture(nil, "OVERLAY")
-ArtFrame_1:SetTexture(T.Line)
-ArtFrame_1:SetSize(3,6)
-ArtFrame_1:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0,-12)
-ArtFrame_1:SetVertexColor(unpack(T.Color.Orange))
-ArtFrame_1:SetAlpha(0.9)
+--- ----------------------------------
+--> Functions
+--- ----------------------------------
+local Location = CreateFrame("Button", nil, Minimap)
+Location:SetFrameLevel(Lv2)
 
-local ArtFrame_2 = ArtFrame:CreateTexture(nil, "OVERLAY")
-ArtFrame_2:SetTexture(T.Line)
-ArtFrame_2:SetSize(3,6)
-ArtFrame_2:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0,-12)
-ArtFrame_2:SetVertexColor(unpack(T.Color.Orange))
-ArtFrame_2:SetAlpha(0.9)
+Location.txt = Location:CreateFontString(nil, "OVERLAY")
+Location.txt:SetFont(T.Font.Zfull, 12, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
+Location.txt:SetAlpha(0.8)
+Location.txt:SetPoint("RIGHT", Minimap, "LEFT", -5, 60)
+Location.txt:SetJustifyH("RIGHT")
 
-local ArtFrame_3 = ArtFrame:CreateTexture(nil, "OVERLAY")
-ArtFrame_3:SetTexture(T.Line)
-ArtFrame_3:SetSize(3,6)
-ArtFrame_3:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 0,16)
-ArtFrame_3:SetVertexColor(unpack(T.Color.Orange))
-ArtFrame_3:SetAlpha(0.9)
+Location.t = Location:CreateFontString(nil, "OVERLAY")
+Location.t:SetFont(T.Font.auras, 18, "OUTLINE MONOCHROME")--"OUTLINE MONOCHROME"
+Location.t:SetAlpha(0.8)
+Location.t:SetPoint("RIGHT", Location.txt, "LEFT", 0, -2)
+Location.t:SetJustifyH("CENTER")
+Location.t:SetText(F.Hex(T.Color.Orange).."l".."|r")
+
+Location:RegisterEvent("ZONE_CHANGED")
+Location:RegisterEvent("ZONE_CHANGED_INDOORS")
+Location:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+Location:RegisterEvent("PLAYER_ENTERING_WORLD")
+Location:RegisterEvent("MINIMAP_ZONE_CHANGED")
+Location:SetScript("OnEvent", function(self, event)
+	--local subzone, zone, pvp = GetSubZoneText(), GetZoneText(), GetZonePVPInfo()
+	local minizone,pvpType = GetMinimapZoneText(),GetZonePVPInfo()
+	local pvpcolor = F.Hex(T.Color.Orange)
+	if pvpType == "contested" or pvpType == "hostile" then
+		pvpcolor = F.Hex(T.Color.Yellow)
+	elseif pvpType == "sanctuary" then
+		F.Hex(T.Color.Blue)
+	elseif pvpType == "combat" then
+		pvpcolor = F.Hex(T.Color.Red)
+	end
+	Location.txt:SetText(pvpcolor..minizone.."|r")
+end)
+
 
 --- ----------------------------------
 --> Hide
@@ -77,7 +93,7 @@ local frames = {
 	"MinimapZoomIn",
 	"MiniMapVoiceChatFrame",
 	"MiniMapWorldMapButton",
-    	"MiniMapMailBorder",
+    "MiniMapMailBorder",
 	"GuildInstanceDifficulty",
 	"MiniMapBattlefieldBorder",
 }
@@ -126,7 +142,22 @@ MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, -15)
 MiniMapInstanceDifficulty:SetAlpha(0.2)
 MiniMapInstanceDifficulty:SetFrameStrata("LOW")
 
--->WatchFrame
+
+--- ----------------------------------
+--> 
+--- ----------------------------------
+-->>MouseWheel zoom
+Minimap:EnableMouseWheel(true)
+Minimap:SetScript("OnMouseWheel", function(self, d)
+	local Zoom,maxZoom = Minimap:GetZoom(),Minimap:GetZoomLevels()
+	if d > 0 then
+		Minimap:SetZoom((Zoom+1 >= maxZoom and maxZoom) or Zoom+1)
+	elseif d < 0 then
+		Minimap:SetZoom((Zoom-1 <= 0 and 0) or Zoom-1)
+	end
+end)
+
+-->>WatchFrame
 if moveWatchFrame then
 	WatchFrame:ClearAllPoints()	
 	WatchFrame.ClearAllPoints = function() end
@@ -135,21 +166,6 @@ if moveWatchFrame then
 	WatchFrame:SetClampedToScreen(true)
 	WatchFrame:SetHeight(qheight)
 end
-
----------------------
--- mousewheel zoom --
----------------------
-
-Minimap:EnableMouseWheel(true)
-Minimap:SetScript("OnMouseWheel", function(self, z)
-	local c = Minimap:GetZoom()
-	if(z > 0 and c < 5) then
-		Minimap:SetZoom(c + 1)
-	elseif(z < 0 and c > 0) then
-		Minimap:SetZoom(c - 1)
-	end
-end)
-
 ------------------------
 -- move and clickable --
 ------------------------
@@ -163,7 +179,7 @@ Minimap:SetScript("OnMouseDown", function()
     end
 end)
 --]]
-Minimap:SetScript('OnMouseUp', function(self, button)
+Minimap:SetScript('OnMouseDown', function(self, button)
 	Minimap:StopMovingOrSizing()
     if (button == 'RightButton') then
         ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, self, - (Minimap:GetWidth() * 0.7), -3)
@@ -181,4 +197,40 @@ end
 SLASH_CALENDAR1 = "/cl"
 SLASH_CALENDAR2 = "/calendar"
 
-function GetMinimapShape() return 'SQUARE' end
+--function GetMinimapShape() return 'SQUARE' end
+
+
+
+--[[
+
+function Minimap_UpdateRotationSetting()
+    if ( GetCVar("rotateMinimap") == "1" ) then
+        MinimapCompassTexture:Show();
+        MinimapNorthTag:Hide();
+    else
+        MinimapCompassTexture:Hide();
+        MinimapNorthTag:Show();
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]--

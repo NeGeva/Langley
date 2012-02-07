@@ -122,7 +122,7 @@ C["UnitFrame"] = {
 
 -->Minimap
 C["Minimap"] = {
-	["Position"] = {"TOPRIGHT", UIParent, "TOPRIGHT", -20, 0},--（-80，0）
+	["Position"] = {"TOPRIGHT", UIParent, "TOPRIGHT", -40, -30},--（-80，0）
 	["Scale"] = 1,
 }
 
@@ -142,7 +142,8 @@ T["Color"] = {
 	["3.0"] = {0/255, 166/255, 192/255},
 	["4.0"] = {255/255, 255/255, 255/255},
 	
-	["White"] = {243/255, 244/255, 246/255},
+	--["White"] = {243/255, 244/255, 246/255},
+	["White"] = {1, 1, 1},
 	["Gray"] = {60/255, 79/255, 57/255},
 	["DarkBlue"] = {87/255, 96/255, 105/255},
 	
@@ -166,5 +167,6 @@ T["Font"] = {
 	["slkscr"] = "Interface\\Addons\\Langley\\Media\\slkscr.ttf",
 	["SEMPRG"] = "Interface\\Addons\\Langley\\Media\\SEMPRG__.TTF",
 	["Zfull"] = "Interface\\Addons\\Langley\\Media\\Zfull-GB.ttf",
+	["auras"] = "Interface\\Addons\\Langley\\Media\\auras.ttf",
 	
 }
